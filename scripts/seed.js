@@ -2,7 +2,7 @@
  * seed.js — populate the database with sample data for local development.
  * Usage: node scripts/seed.js
  */
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(

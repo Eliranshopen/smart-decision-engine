@@ -1,8 +1,25 @@
-crewai==0.51.0
-crewai-tools==0.8.3
-supabase==2.5.3
-requests==2.32.3
-python-dotenv==1.0.1
-pydantic==2.8.2
-apscheduler==3.10.4
-openai==1.37.0
+# ─── Core agents framework ────────────────────────────────────────────────────
+crewai>=1.11.0
+crewai-tools>=1.11.0
+
+# ─── Scheduling ───────────────────────────────────────────────────────────────
+apscheduler>=3.10.4
+
+# ─── Supabase client ──────────────────────────────────────────────────────────
+supabase>=2.28.0
+
+# ─── Utilities ────────────────────────────────────────────────────────────────
+requests>=2.32.0
+python-dotenv>=1.0.1
+pydantic>=2.8.0
+
+# ─── NOTE: Python 3.11 required ───────────────────────────────────────────────
+# Python 3.13/3.14 is NOT yet supported (numpy/tokenizers missing pre-built wheels).
+# Install using the conda sde-agents environment:
+#   conda activate sde-agents
+#   pip install -r requirements.txt
+#
+# Or create a venv with Python 3.11:
+#   py -3.11 -m venv .venv
+#   .venv\Scripts\activate
+#   pip install -r requirements.txt
