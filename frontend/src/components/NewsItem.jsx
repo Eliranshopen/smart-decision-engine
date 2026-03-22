@@ -1,56 +1,67 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { ExternalLink, Zap, Shield } from 'lucide-react';
 
-const RISK_BADGE = {
-  low:    'bg-green-900 text-green-300',
-  medium: 'bg-yellow-900 text-yellow-300',
-  high:   'bg-red-900   text-red-300',
-};
-
-export default function NewsItem({ item }) {
+export default function NewsItem({ item, index = 0 }) {
+  const { t } = useTranslation();
   const { headline, source_url, summary, risk_level, opportunity_level, credibility, published_at } = item;
 
   const date = published_at
     ? new Date(published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     : null;
 
+  const riskClass = {
+    low: 'badge-green',
+    medium: 'badge-amber',
+    high: 'badge-red',
+  }[risk_level] || 'badge-gray';
+
   return (
     <motion.article
-      className="card hover:border-gray-700 transition-all"
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.3, delay: index * 0.04 }}
+      className="glass-card p-5 flex flex-col gap-3"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start gap-3">
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-white text-sm leading-snug mb-1">
+          <h3 className="font-display font-semibold text-white text-sm leading-snug mb-1">
             {source_url ? (
-              <a href={source_url} target="_blank" rel="noopener noreferrer" className="hover:text-brand-400 transition-colors">
+              <a href={source_url} target="_blank" rel="noopener noreferrer"
+                className="hover:text-amber-400 transition-colors no-underline">
                 {headline}
               </a>
             ) : headline}
           </h3>
           {summary && (
-            <p className="text-xs text-gray-400 line-clamp-2">{summary}</p>
+            <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{summary}</p>
           )}
         </div>
-
-        <div className="flex flex-col items-end gap-1 shrink-0">
-          {risk_level && (
-            <span className={`badge ${RISK_BADGE[risk_level] || 'bg-gray-800 text-gray-300'}`}>
-              {risk_level} risk
-            </span>
-          )}
-          {opportunity_level && (
-            <span className="badge bg-brand-900/50 text-brand-300">
-              ⚡ {opportunity_level}/10
-            </span>
-          )}
-        </div>
+        {source_url && (
+          <a href={source_url} target="_blank" rel="noopener noreferrer"
+            className="shrink-0 text-gray-600 hover:text-amber-400 transition-colors no-underline">
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        )}
       </div>
 
-      <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
-        {date && <span>{date}</span>}
-        {credibility && <span>Credibility: {credibility}/10</span>}
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
+          {risk_level && <span className={riskClass}>{t(`news.filters.${risk_level}`, { defaultValue: risk_level })}</span>}
+          {date && <span className="text-[10px] text-gray-600 font-mono">{date}</span>}
+        </div>
+        <div className="flex items-center gap-3">
+          {credibility != null && (
+            <span className="flex items-center gap-1 text-[10px] font-mono text-gray-500">
+              <Shield className="w-3 h-3" />{credibility}/10
+            </span>
+          )}
+          {opportunity_level != null && (
+            <span className="flex items-center gap-1 text-[10px] font-mono text-amber-500">
+              <Zap className="w-3 h-3" />{opportunity_level}/10
+            </span>
+          )}
+        </div>
       </div>
     </motion.article>
   );

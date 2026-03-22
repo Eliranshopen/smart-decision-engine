@@ -8,31 +8,31 @@ from tools.supabase_tool import fetch_affiliates, fetch_news, refresh_recommenda
 SECTIONS = [
     {
         "key": "trending",
-        "label": "🔥 What People Are Buying This Week",
+        "label": "Trending: What People Are Buying This Week",
         "filter": lambda a: a.get("trend_score", 0) > 7 and a.get("risk_score", 10) < 4,
         "sort_key": "trend_score",
     },
     {
         "key": "beginner",
-        "label": "💰 Most Profitable for Beginners",
+        "label": "Beginner: Most Profitable for Beginners",
         "filter": lambda a: a.get("ease_of_joining", 0) > 7 and a.get("commission_pct", 0) > 20,
         "sort_key": "commission_pct",
     },
     {
         "key": "risky",
-        "label": "⚠️ Hot but Risky Trends",
+        "label": "Risky: Hot but Risky Trends",
         "filter": lambda a: a.get("risk_score", 0) > 6,
         "sort_key": "trend_score",
     },
     {
         "key": "top",
-        "label": "🧠 Best Opportunity Right Now",
+        "label": "Top: Best Opportunity Right Now",
         "filter": lambda a: True,
         "sort_key": "composite_score",
     },
     {
         "key": "gems",
-        "label": "🎯 Hidden Gems",
+        "label": "Gems: Hidden Gems",
         "filter": lambda a: (a.get("composite_score") or 0) > 7 and (a.get("popularity_score") or 10) < 4,
         "sort_key": "composite_score",
     },
@@ -57,7 +57,7 @@ def run_decision_engine():
 
         briefing[section["key"]] = sorted_items
         print(f"\n{section['label']}")
-        print("─" * 50)
+        print("-" * 50)
         if sorted_items:
             for item in sorted_items:
                 score = item.get("composite_score") or 0

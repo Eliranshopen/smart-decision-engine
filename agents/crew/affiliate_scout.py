@@ -13,12 +13,25 @@ from datetime import datetime
 from crewai import Agent, Task, Crew
 from tools.scoring import score_affiliate
 from tools.supabase_tool import upsert_affiliates
+from tools.clickbank_scraper import fetch_top_products
 
 
 # ─── Seed data ────────────────────────────────────────────────────────────────
 # TODO: Replace / extend with live API calls to each affiliate network.
 # These are representative examples used to populate the DB on first run.
 SEED_AFFILIATES = [
+    {
+        "site_name": "AI Beginner Course",
+        "affiliate_link": "https://cbc23zy7z8vp9-j890l7f4rnfx.hop.clickbank.net",
+        "category": "courses",
+        "commission_pct": 75.0,
+        "ease_of_joining": 10,
+        "trustworthiness": 7,
+        "popularity_score": 6.5,
+        "trend_score": 8.0,
+        "risk_score": 2.0,
+        "conversion_score": 6.5,
+    },
     {
         "site_name": "Jasper AI",
         "affiliate_link": f"https://www.jasper.ai/?fpr={os.environ.get('AFFILIATE_ID_PARTNERSTACK', 'TODO')}",
@@ -44,16 +57,16 @@ SEED_AFFILIATES = [
         "conversion_score": 7.0,
     },
     {
-        "site_name": "ClickFunnels",
-        "affiliate_link": f"https://www.clickfunnels.com/?cf_affiliate_id={os.environ.get('AFFILIATE_ID_CLICKBANK', 'TODO')}",
-        "category": "saas",
-        "commission_pct": 40.0,
-        "ease_of_joining": 7,
+        "site_name": "InstaDoodle",
+        "affiliate_link": "https://42ccc4wh3xwn8xab0fzwqby7xv.hop.clickbank.net",
+        "category": "ai-tools",
+        "commission_pct": 50.0,
+        "ease_of_joining": 10,
         "trustworthiness": 7,
-        "popularity_score": 7.0,
-        "trend_score": 6.0,
-        "risk_score": 4.0,
-        "conversion_score": 6.5,
+        "popularity_score": 7.5,
+        "trend_score": 7.5,
+        "risk_score": 2.5,
+        "conversion_score": 7.0,
     },
     {
         "site_name": "Semrush",
@@ -119,12 +132,55 @@ SEED_AFFILIATES = [
 
 
 def run_affiliate_scout():
-    """Compute composite scores and upsert all seed affiliates."""
+    """Fetch live ClickBank products + seed data, score and upsert all."""
+    # 1. Try to fetch live products from ClickBank API
+    live_products = fetch_top_products(min_gravity=10.0, max_results=20)
+
+    # 2. Fall back to seed data if API returns nothing
+    base_list = live_products if live_products else SEED_AFFILIATES
+    if not live_products:
+        print("[scout] No live products fetched — using seed data as fallback.")
+
     records = []
-    for item in SEED_AFFILIATES:
+    for item in base_list:
         item["updated_at"] = datetime.utcnow().isoformat()
         records.append(item)
         print(f"[scout] Prepared: {item['site_name']} (commission: {item['commission_pct']}%)")
+
+    # 3. Always include our manually confirmed ClickBank links
+    manual = [
+        {
+            "site_name": "InstaDoodle",
+            "affiliate_link": "https://42ccc4wh3xwn8xab0fzwqby7xv.hop.clickbank.net",
+            "category": "ai-tools",
+            "commission_pct": 50.0,
+            "ease_of_joining": 10,
+            "trustworthiness": 7,
+            "popularity_score": 7.5,
+            "trend_score": 7.5,
+            "risk_score": 2.5,
+            "conversion_score": 7.0,
+            "updated_at": datetime.utcnow().isoformat(),
+        },
+        {
+            "site_name": "AI Beginner Course",
+            "affiliate_link": "https://cbc23zy7z8vp9-j890l7f4rnfx.hop.clickbank.net",
+            "category": "courses",
+            "commission_pct": 75.0,
+            "ease_of_joining": 10,
+            "trustworthiness": 7,
+            "popularity_score": 6.5,
+            "trend_score": 8.0,
+            "risk_score": 2.0,
+            "conversion_score": 6.5,
+            "updated_at": datetime.utcnow().isoformat(),
+        },
+    ]
+    # Add manual ones only if not already in records
+    existing_names = {r["site_name"] for r in records}
+    for m in manual:
+        if m["site_name"] not in existing_names:
+            records.append(m)
 
     upsert_affiliates(records)
     print(f"[scout] Done. {len(records)} affiliates upserted.")

@@ -27,7 +27,7 @@ def upsert_affiliates(records: list[dict]) -> None:
         return
     sb = get_supabase()
     result = sb.table("affiliates").upsert(records, on_conflict="site_name").execute()
-    print(f"[supabase] upserted {len(records)} affiliates → {len(result.data)} rows affected")
+    print(f"[supabase] upserted {len(records)} affiliates -> {len(result.data)} rows affected")
 
 
 def upsert_news(records: list[dict]) -> None:
@@ -36,7 +36,7 @@ def upsert_news(records: list[dict]) -> None:
         return
     sb = get_supabase()
     result = sb.table("news_digest").upsert(records, on_conflict="source_url").execute()
-    print(f"[supabase] upserted {len(records)} news items → {len(result.data)} rows affected")
+    print(f"[supabase] upserted {len(records)} news items -> {len(result.data)} rows affected")
 
 
 def fetch_affiliates(limit: int = 200) -> list[dict]:

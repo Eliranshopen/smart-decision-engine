@@ -3,25 +3,87 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
 
   body {
-    @apply bg-gray-950 text-gray-100 font-sans antialiased;
+    @apply bg-ink-950 text-gray-100 font-sans antialiased;
+    background-image: radial-gradient(circle, #ffffff06 1px, transparent 1px);
+    background-size: 28px 28px;
   }
 
-  a {
-    @apply text-brand-500 hover:text-brand-600 transition-colors;
-  }
+  /* RTL support for Hebrew */
+  [dir="rtl"] { direction: rtl; text-align: right; }
+  [dir="rtl"] .ltr-only { direction: ltr; text-align: left; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #07070f; }
+  ::-webkit-scrollbar-thumb { background: #f59e0b44; border-radius: 2px; }
 }
 
 @layer components {
-  .card {
-    @apply bg-gray-900 border border-gray-800 rounded-xl p-5 transition-all duration-200;
+  .glass-card {
+    @apply bg-ink-800/60 backdrop-blur-sm border border-white/5 rounded-2xl transition-all duration-300;
+  }
+
+  .glass-card:hover {
+    @apply border-amber-500/30 shadow-lg;
+    box-shadow: 0 0 30px #f59e0b10;
+  }
+
+  .amber-btn {
+    @apply bg-amber-500 hover:bg-amber-400 text-ink-950 font-semibold px-5 py-2.5 rounded-xl
+           transition-all duration-200 active:scale-95 font-mono text-sm tracking-wide;
+  }
+
+  .ghost-btn {
+    @apply border border-white/10 hover:border-amber-500/40 text-gray-300 hover:text-amber-400
+           font-mono text-sm px-5 py-2.5 rounded-xl transition-all duration-200;
   }
 
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono font-medium;
   }
+
+  .badge-amber {
+    @apply badge bg-amber-500/15 text-amber-400 border border-amber-500/25;
+  }
+
+  .badge-green {
+    @apply badge bg-emerald-500/15 text-emerald-400 border border-emerald-500/25;
+  }
+
+  .badge-red {
+    @apply badge bg-red-500/15 text-red-400 border border-red-500/25;
+  }
+
+  .badge-gray {
+    @apply badge bg-white/5 text-gray-400 border border-white/10;
+  }
+
+  .score-ring {
+    @apply relative inline-flex items-center justify-center;
+  }
+
+  .section-title {
+    @apply font-display font-semibold text-xl text-white tracking-tight;
+  }
+
+  .page-title {
+    @apply font-display font-bold text-3xl md:text-4xl text-white tracking-tight;
+  }
+
+  /* Skeleton loader */
+  .skeleton {
+    @apply bg-ink-700 rounded-lg animate-pulse;
+    background: linear-gradient(90deg, #131326 25%, #1a1a33 50%, #131326 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

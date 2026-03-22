@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNews } from '../hooks/useNews';
 import NewsItem from '../components/NewsItem';
 import FilterBar from '../components/FilterBar';
+import { Radio } from 'lucide-react';
 
 export default function NewsFeed() {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState({});
   const { data, isLoading, error } = useNews(filters);
 
@@ -11,48 +14,50 @@ export default function NewsFeed() {
   const meta = data?.meta || {};
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white">News Digest</h1>
-        <p className="text-gray-400 mt-1">
-          Latest signals from HackerNews, Reddit, and ProductHunt — scored for risk and opportunity.
-        </p>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="mb-8">
+        <div className="flex items-center gap-2 mb-1">
+          <Radio className="w-4 h-4 text-amber-500" />
+          <h1 className="page-title">{t('news.title')}</h1>
+        </div>
+        <p className="text-gray-500 font-mono text-sm">{t('news.subtitle')}</p>
       </div>
 
       <FilterBar onChange={setFilters} />
 
       {isLoading && (
-        <div className="space-y-3 animate-pulse">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-24 bg-gray-800 rounded-xl" />
+        <div className="space-y-3">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="skeleton h-28 rounded-2xl" />
           ))}
         </div>
       )}
 
       {error && (
-        <div className="p-4 bg-red-950 border border-red-800 rounded-xl text-red-300 text-sm">
-          Failed to load news: {error.message}
+        <div className="p-4 glass-card text-red-400 text-sm font-mono">
+          {t('dashboard.error')} — {error.message}
         </div>
       )}
 
       {!isLoading && items.length > 0 && (
         <>
-          <div className="text-xs text-gray-500 mb-3">
-            Showing {items.length} of {meta.count || items.length} items
+          <div className="text-xs text-gray-600 font-mono mb-4">
+            {items.length} / {meta.count || items.length} signals
           </div>
           <div className="space-y-3">
-            {items.map((item) => (
-              <NewsItem key={item.id} item={item} />
+            {items.map((item, i) => (
+              <NewsItem key={item.id} item={item} index={i} />
             ))}
           </div>
         </>
       )}
 
       {!isLoading && !error && items.length === 0 && (
-        <div className="text-center py-20 text-gray-500">
-          <p className="text-5xl mb-4">📰</p>
-          <p className="text-lg font-medium">No news yet</p>
-          <p className="text-sm mt-1">Run the NewsDigestAgent to populate this feed.</p>
+        <div className="text-center py-24">
+          <div className="w-16 h-16 rounded-2xl bg-ink-800 border border-white/5 flex items-center justify-center mx-auto mb-4">
+            <Radio className="w-7 h-7 text-amber-500" />
+          </div>
+          <p className="font-display font-semibold text-white">{t('news.empty')}</p>
         </div>
       )}
     </div>

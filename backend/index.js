@@ -6,6 +6,7 @@ const affiliatesRouter = require('./routes/affiliates');
 const newsRouter = require('./routes/news');
 const recommendationsRouter = require('./routes/recommendations');
 const subscriptionRouter = require('./routes/subscription');
+const vendorApplicationsRouter = require('./routes/vendorApplications');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -28,6 +29,7 @@ app.use('/api/affiliates', affiliatesRouter);
 app.use('/api/news', newsRouter);
 app.use('/api/recommendations', recommendationsRouter);
 app.use('/api/subscription', subscriptionRouter);
+app.use('/api/vendor-applications', vendorApplicationsRouter);
 
 // ─── 404 ──────────────────────────────────────────────────────────────────────
 app.use((req, res) => {

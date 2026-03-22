@@ -146,3 +146,24 @@ DROP POLICY IF EXISTS "Service role write subscriptions" ON subscriptions;
 CREATE POLICY "Service role write subscriptions"
   ON subscriptions FOR INSERT
   WITH CHECK (true);  -- allow anonymous signups
+
+-- Vendor applications table (course owners who want to list their courses)
+CREATE TABLE IF NOT EXISTS vendor_applications (
+  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name            text NOT NULL,
+  email           text NOT NULL,
+  course_name     text NOT NULL,
+  course_url      text NOT NULL,
+  category        text NOT NULL,
+  commission_pct  numeric NOT NULL,
+  description     text,
+  status          text NOT NULL DEFAULT 'pending',
+  submitted_at    timestamptz DEFAULT now()
+);
+
+-- Allow anyone to submit (insert only), no read without auth
+ALTER TABLE vendor_applications ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can submit application"
+  ON vendor_applications FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "Service role reads all"
+  ON vendor_applications FOR SELECT TO service_role USING (true);

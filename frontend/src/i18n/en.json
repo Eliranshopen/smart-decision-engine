@@ -1,0 +1,109 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "news": "News Feed",
+    "tagline": "AI-Powered Opportunity Engine"
+  },
+  "hero": {
+    "badge": "AI-Powered",
+    "title": "Find Your Next",
+    "titleAccent": "Digital Opportunity",
+    "subtitle": "Our AI scans thousands of affiliate programs, courses, and tools daily — surfacing only the ones worth your time.",
+    "cta": "Start Exploring",
+    "ctaSecondary": "View All Opportunities",
+    "stats": {
+      "programs": "Programs Tracked",
+      "updated": "Updated Daily",
+      "free": "Free to Use"
+    }
+  },
+  "quiz": {
+    "title": "Personalize Your Feed",
+    "subtitle": "Answer 3 quick questions to get recommendations tailored to you.",
+    "step": "Step {{current}} of {{total}}",
+    "next": "Next",
+    "back": "Back",
+    "finish": "Show My Results",
+    "questions": {
+      "goal": {
+        "label": "What's your primary goal?",
+        "options": {
+          "income": "Earn passive income",
+          "skills": "Learn new skills",
+          "tools": "Find useful AI tools",
+          "all": "All of the above"
+        }
+      },
+      "experience": {
+        "label": "What's your experience level?",
+        "options": {
+          "beginner": "Complete beginner",
+          "some": "Some experience",
+          "advanced": "Advanced marketer",
+          "expert": "Industry expert"
+        }
+      },
+      "risk": {
+        "label": "What's your risk tolerance?",
+        "options": {
+          "low": "Low — safety first",
+          "medium": "Medium — balanced",
+          "high": "High — I chase upside"
+        }
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Your Opportunities",
+    "subtitle": "AI-curated picks updated every 24 hours",
+    "sections": {
+      "trending": "Trending This Week",
+      "beginner": "Best for Beginners",
+      "top": "Top Picks",
+      "risky": "High Risk / High Reward",
+      "gems": "Hidden Gems"
+    },
+    "empty": "No matches yet — more programs loading soon.",
+    "loading": "Loading opportunities...",
+    "error": "Failed to load. Retrying..."
+  },
+  "card": {
+    "commission": "Commission",
+    "score": "Score",
+    "risk": "Risk",
+    "trend": "Trend",
+    "cta": "View Opportunity",
+    "riskLevels": {
+      "low": "Low Risk",
+      "medium": "Medium Risk",
+      "high": "High Risk"
+    },
+    "categories": {
+      "ai-tools": "AI Tool",
+      "courses": "Course",
+      "saas": "SaaS",
+      "finance": "Finance"
+    }
+  },
+  "news": {
+    "title": "Market Signals",
+    "subtitle": "Fresh intelligence from HackerNews, Reddit & ProductHunt",
+    "filters": {
+      "all": "All",
+      "low": "Low Risk",
+      "medium": "Medium",
+      "high": "High Risk",
+      "opportunityMin": "Min Opportunity Score"
+    },
+    "readMore": "Read more",
+    "credibility": "Credibility",
+    "opportunity": "Opportunity",
+    "loading": "Loading signals...",
+    "empty": "No signals match your filters."
+  },
+  "common": {
+    "new": "NEW",
+    "hot": "HOT",
+    "verified": "Verified"
+  }
+}
