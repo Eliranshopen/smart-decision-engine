@@ -73,7 +73,7 @@ export default function AffiliateCard({ affiliate, index = 0 }) {
 
   const {
     site_name, affiliate_link, category,
-    commission_pct, composite_score, preview_video_url,
+    commission_pct, composite_score, preview_video_url, description,
   } = affiliate;
 
   const cat = CAT[category] || DEFAULT_CAT;
@@ -195,6 +195,13 @@ export default function AffiliateCard({ affiliate, index = 0 }) {
           >
             {site_name}
           </h3>
+
+          {/* Description */}
+          {description && (
+            <p className="text-xs text-white/50 leading-relaxed line-clamp-2">
+              {description}
+            </p>
+          )}
 
           {/* Score */}
           <ScoreStars score={composite_score} />
