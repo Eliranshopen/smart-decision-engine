@@ -68,6 +68,16 @@ CANDIDATES = [
         "access_method": "api",
         "category": "courses",
     },
+    {
+        "name": "Udemy Hebrew",
+        "base_url": "https://www.udemy.com",
+        "probe_url": "https://www.udemy.com/api-2.0/courses/?search=AI&page_size=1&language=he",
+        "search_url": "https://www.udemy.com/api-2.0/courses/?search={query}&page_size=20&ordering=highest-rated&language=he",
+        "affiliate_link_template": "https://www.udemy.com/course/{slug}/",
+        "access_method": "api",
+        "category": "courses",
+        "language": "he",
+    },
 ]
 
 
