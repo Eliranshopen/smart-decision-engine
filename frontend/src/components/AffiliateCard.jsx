@@ -49,7 +49,7 @@ function getYouTubeId(url) {
   return m ? m[1] : null;
 }
 
-function ScoreStars({ score, max = 15 }) {
+function ScoreStars({ score, max = 10 }) {
   const normalized = Math.min((score || 0) / max, 1);
   const stars = Math.round(normalized * 5);
   return (
