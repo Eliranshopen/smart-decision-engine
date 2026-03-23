@@ -109,25 +109,36 @@ export default function AffiliateCard({ affiliate, index = 0 }) {
           style={{ background: `linear-gradient(90deg, ${cat.from}, ${cat.to})` }}
         />
 
-        {/* ── Banner: gradient placeholder → video on hover ── */}
+        {/* ── Banner: thumbnail → video on hover ── */}
         <div className="relative h-36 overflow-hidden flex-shrink-0">
-          {/* Default gradient background */}
-          <div
-            className="absolute inset-0 transition-opacity duration-500"
-            style={{
-              background: `linear-gradient(135deg, ${cat.from}40 0%, ${cat.to}20 50%, rgba(0,0,0,0) 100%)`,
-              opacity: isHovered && embedSrc ? 0 : 1,
-            }}
-          />
-          {/* Decorative blobs */}
-          <div
-            className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-20 blur-2xl"
-            style={{ background: cat.from }}
-          />
-          <div
-            className="absolute -bottom-4 -left-4 w-24 h-24 rounded-full opacity-10 blur-xl"
-            style={{ background: cat.to }}
-          />
+          {/* YouTube thumbnail (always visible when available) */}
+          {ytId ? (
+            <img
+              src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
+              alt={site_name}
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+              style={{ opacity: isHovered ? 0 : 1 }}
+            />
+          ) : (
+            <>
+              {/* Fallback gradient background */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `linear-gradient(135deg, ${cat.from}40 0%, ${cat.to}20 50%, rgba(0,0,0,0) 100%)`,
+                }}
+              />
+              {/* Decorative blobs */}
+              <div
+                className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-20 blur-2xl"
+                style={{ background: cat.from }}
+              />
+              <div
+                className="absolute -bottom-4 -left-4 w-24 h-24 rounded-full opacity-10 blur-xl"
+                style={{ background: cat.to }}
+              />
+            </>
+          )}
 
           {/* Category label in banner */}
           <div className="absolute top-3 left-3 z-10">
