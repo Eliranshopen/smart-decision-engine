@@ -5,6 +5,39 @@ const supabase = require('../services/supabase');
 
 const router = express.Router();
 
+/**
+ * Appends affiliate tracking params to a link based on the domain.
+ * When env vars are not set, returns the link unchanged.
+ */
+function withAffiliateTracking(link) {
+  if (!link) return link;
+  try {
+    const url = new URL(link);
+    const host = url.hostname;
+
+    if (host.includes('udemy.com')) {
+      const id = process.env.UDEMY_AFFILIATE_ID;
+      if (id) {
+        url.searchParams.set('ranMID', '39197');
+        url.searchParams.set('ranEAID', id);
+        url.searchParams.set('ranSiteID', 'affiliate');
+      }
+    } else if (host.includes('coursera.org')) {
+      const id = process.env.COURSERA_AFFILIATE_ID;
+      if (id) {
+        url.searchParams.set('siteID', id);
+        url.searchParams.set('utm_content', 'affiliate');
+        url.searchParams.set('utm_medium', 'affiliate');
+        url.searchParams.set('utm_source', 'aff');
+      }
+    }
+
+    return url.toString();
+  } catch {
+    return link;
+  }
+}
+
 const listQuerySchema = z.object({
   category: z.string().optional(),
   search: z.string().optional(),
@@ -38,8 +71,13 @@ router.get('/', validateQuery(listQuerySchema), async (req, res, next) => {
 
     if (error) return next(error);
 
+    const enriched = (data || []).map(item => ({
+      ...item,
+      affiliate_link: withAffiliateTracking(item.affiliate_link),
+    }));
+
     res.json({
-      data,
+      data: enriched,
       meta: { count, page, limit, totalPages: Math.ceil(count / limit) },
       error: null,
     });
@@ -64,7 +102,7 @@ router.get('/:id', async (req, res, next) => {
       return next(error);
     }
 
-    res.json({ data, meta: {}, error: null });
+    res.json({ data: { ...data, affiliate_link: withAffiliateTracking(data.affiliate_link) }, meta: {}, error: null });
   } catch (err) {
     next(err);
   }
