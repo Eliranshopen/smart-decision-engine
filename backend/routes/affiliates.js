@@ -7,16 +7,17 @@ const router = express.Router();
 
 const listQuerySchema = z.object({
   category: z.string().optional(),
+  search: z.string().optional(),
   sort: z.enum(['composite_score', 'commission_pct', 'trend_score', 'created_at']).optional().default('composite_score'),
   order: z.enum(['asc', 'desc']).optional().default('desc'),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(50),
   page: z.coerce.number().int().min(1).optional().default(1),
 });
 
 // GET /api/affiliates
 router.get('/', validateQuery(listQuerySchema), async (req, res, next) => {
   try {
-    const { category, sort, order, limit, page } = req.query;
+    const { category, search, sort, order, limit, page } = req.query;
     const offset = (page - 1) * limit;
 
     let query = supabase
@@ -25,8 +26,12 @@ router.get('/', validateQuery(listQuerySchema), async (req, res, next) => {
       .order(sort, { ascending: order === 'asc' })
       .range(offset, offset + limit - 1);
 
-    if (category) {
+    if (category && category !== 'all') {
       query = query.eq('category', category);
+    }
+
+    if (search) {
+      query = query.ilike('site_name', `%${search}%`);
     }
 
     const { data, error, count } = await query;
