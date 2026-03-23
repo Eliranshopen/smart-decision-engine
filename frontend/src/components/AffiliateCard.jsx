@@ -73,7 +73,7 @@ export default function AffiliateCard({ affiliate, index = 0 }) {
 
   const {
     site_name, affiliate_link, category,
-    commission_pct, composite_score, preview_video_url, description,
+    commission_pct, composite_score, preview_video_url, description, language,
   } = affiliate;
 
   const cat = CAT[category] || DEFAULT_CAT;
@@ -141,11 +141,16 @@ export default function AffiliateCard({ affiliate, index = 0 }) {
           )}
 
           {/* Category label in banner */}
-          <div className="absolute top-3 left-3 z-10">
+          <div className="absolute top-3 left-3 z-10 flex gap-1.5 flex-wrap">
             <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border backdrop-blur-sm ${cat.badge}`}>
               {cat.label}
               {isHot && <Sparkles className="w-3 h-3 fill-current" />}
             </span>
+            {language === 'he' && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30 backdrop-blur-sm">
+                🇮🇱 עברית
+              </span>
+            )}
           </div>
 
           {/* Video preview */}

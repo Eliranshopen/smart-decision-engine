@@ -45,6 +45,7 @@ const SECTION_HEADING = {
 export default function Dashboard() {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
+  const [langFilter, setLangFilter] = useState('all');
 
   const { data, isLoading, error } = useAffiliates({ limit: 100, sort: 'composite_score' });
   const allItems = data?.data ?? [];
@@ -52,12 +53,13 @@ export default function Dashboard() {
   const filtered = useMemo(() => {
     let items = allItems;
     if (activeCategory !== 'all') items = items.filter(i => i.category === activeCategory);
+    if (langFilter !== 'all') items = items.filter(i => (i.language || 'en') === langFilter);
     if (search.trim()) {
       const q = search.toLowerCase();
       items = items.filter(i => i.site_name?.toLowerCase().includes(q));
     }
     return items;
-  }, [allItems, activeCategory, search]);
+  }, [allItems, activeCategory, langFilter, search]);
 
   const showGrouped = activeCategory === 'all' && !search.trim();
 
@@ -196,6 +198,26 @@ export default function Dashboard() {
               </motion.button>
             );
           })}
+        </div>
+
+        {/* Language filter */}
+        <div className="flex gap-2 mt-3">
+          {[
+            { key: 'all', label: 'All languages' },
+            { key: 'en',  label: '🌍 English' },
+            { key: 'he',  label: '🇮🇱 עברית' },
+          ].map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setLangFilter(key)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200
+                ${langFilter === key
+                  ? 'bg-white/10 text-white border-white/20'
+                  : 'bg-white/[0.03] text-white/40 border-white/[0.06] hover:text-white/70'}`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       </motion.div>
 
