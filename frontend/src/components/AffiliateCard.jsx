@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ExternalLink, Sparkles, Star, Zap } from 'lucide-react';
+import { ExternalLink, Sparkles, Star, Zap, TrendingUp } from 'lucide-react';
 import VideoModal from './VideoModal';
 
 // Subcategory colors for AI tools
@@ -47,11 +47,43 @@ function ScoreBar({ score, max = 10 }) {
   );
 }
 
-function getLogoUrl(affiliateLink) {
+// Logo sources: Clearbit first, Google Favicon as fallback
+function getLogoDomain(affiliateLink) {
   try {
-    const domain = new URL(affiliateLink).hostname.replace('www.', '');
-    return `https://logo.clearbit.com/${domain}`;
+    return new URL(affiliateLink).hostname.replace('www.', '');
   } catch { return null; }
+}
+
+function ClearbitLogo({ domain, siteName, accentColor }) {
+  const [state, setState] = useState('clearbit'); // clearbit → favicon → letter
+
+  if (!domain || state === 'letter') {
+    return (
+      <span className="text-lg font-bold" style={{ color: accentColor }}>
+        {siteName.charAt(0)}
+      </span>
+    );
+  }
+
+  if (state === 'favicon') {
+    return (
+      <img
+        src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+        alt={siteName}
+        className="w-8 h-8 object-contain"
+        onError={() => setState('letter')}
+      />
+    );
+  }
+
+  return (
+    <img
+      src={`https://logo.clearbit.com/${domain}`}
+      alt={siteName}
+      className="w-8 h-8 object-contain"
+      onError={() => setState('favicon')}
+    />
+  );
 }
 
 function getYouTubeId(url) {
@@ -60,17 +92,24 @@ function getYouTubeId(url) {
   return m ? m[1] : null;
 }
 
-export default function AffiliateCard({ affiliate, index = 0, mode = 'tool' }) {
-  const [imgError, setImgError] = useState(false);
+// Smart CTA label based on category + pricing
+function getCtaLabel(category, pricing_model) {
+  if (category === 'courses') return 'View Course';
+  if (pricing_model === 'free') return 'Use for Free';
+  if (pricing_model === 'paid') return 'Get Started';
+  return 'Try it Free'; // freemium or unknown
+}
+
+export default function AffiliateCard({ affiliate, index = 0 }) {
   const [showModal, setShowModal] = useState(false);
 
   const {
     site_name, affiliate_link, category, subcategory,
-    commission_pct, composite_score, preview_video_url,
+    composite_score, preview_video_url,
     description, language, pricing_model, skill_level,
   } = affiliate;
 
-  const logoUrl = getLogoUrl(affiliate_link);
+  const logoDomain = getLogoDomain(affiliate_link);
   const ytId = getYouTubeId(preview_video_url);
   const isHot = (composite_score || 0) > 11;
 
@@ -102,18 +141,7 @@ export default function AffiliateCard({ affiliate, index = 0, mode = 'tool' }) {
             className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden"
             style={{ background: `${accentColor}15`, border: `1px solid ${accentColor}30` }}
           >
-            {logoUrl && !imgError ? (
-              <img
-                src={logoUrl}
-                alt={site_name}
-                className="w-8 h-8 object-contain"
-                onError={() => setImgError(true)}
-              />
-            ) : (
-              <span className="text-lg font-bold" style={{ color: accentColor }}>
-                {site_name.charAt(0)}
-              </span>
-            )}
+            <ClearbitLogo domain={logoDomain} siteName={site_name} accentColor={accentColor} />
           </div>
 
           {/* Name + badges */}
@@ -162,12 +190,12 @@ export default function AffiliateCard({ affiliate, index = 0, mode = 'tool' }) {
 
         {/* Footer */}
         <div className="px-4 pb-4 flex flex-col gap-2.5">
-          {/* Score + commission */}
+          {/* Score row */}
           <div className="flex items-center justify-between">
             <ScoreBar score={composite_score} />
-            {commission_pct > 0 && (
-              <span className="text-[10px] font-mono" style={{ color: accentColor }}>
-                {commission_pct >= 100 ? `$${commission_pct}` : `${commission_pct}%`} commission
+            {isHot && (
+              <span className="flex items-center gap-0.5 text-[10px] font-semibold text-amber-400">
+                <TrendingUp className="w-3 h-3" /> Trending
               </span>
             )}
           </div>
@@ -183,7 +211,7 @@ export default function AffiliateCard({ affiliate, index = 0, mode = 'tool' }) {
                           text-white text-xs font-semibold bg-gradient-to-r no-underline
                           transition-all duration-200 active:scale-95 ${cat.btn}`}
             >
-              Try it free <ExternalLink className="w-3 h-3" />
+              {getCtaLabel(category, pricing_model)} <ExternalLink className="w-3 h-3" />
             </a>
             {ytId && (
               <button
