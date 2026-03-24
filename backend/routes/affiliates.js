@@ -46,12 +46,14 @@ const listQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional().default(50),
   page: z.coerce.number().int().min(1).optional().default(1),
   all: z.string().optional(),
+  featured: z.string().optional(),
+  pricing_model: z.string().optional(),
 });
 
 // GET /api/affiliates
 router.get('/', validateQuery(listQuerySchema), async (req, res, next) => {
   try {
-    const { category, search, sort, order, limit, page } = req.query;
+    const { category, search, sort, order, limit, page, featured, pricing_model } = req.query;
     const offset = (page - 1) * limit;
 
     let query = supabase
@@ -65,7 +67,15 @@ router.get('/', validateQuery(listQuerySchema), async (req, res, next) => {
     }
 
     if (search) {
-      query = query.ilike('site_name', `%${search}%`);
+      query = query.or(`site_name.ilike.%${search}%,description.ilike.%${search}%`);
+    }
+
+    if (featured === 'true') {
+      query = query.eq('is_featured', true);
+    }
+
+    if (pricing_model) {
+      query = query.eq('pricing_model', pricing_model);
     }
 
     // Only show active affiliates by default (can be overridden with ?all=true for admin)
@@ -92,13 +102,15 @@ router.get('/', validateQuery(listQuerySchema), async (req, res, next) => {
   }
 });
 
-// GET /api/affiliates/:id
+// GET /api/affiliates/:id  (also accepts slug)
 router.get('/:id', async (req, res, next) => {
   try {
+    const param = req.params.id;
+    const isUUID = /^[0-9a-f-]{36}$/.test(param);
     const { data, error } = await supabase
       .from('affiliates')
       .select('*')
-      .eq('id', req.params.id)
+      .eq(isUUID ? 'id' : 'slug', param)
       .single();
 
     if (error) {

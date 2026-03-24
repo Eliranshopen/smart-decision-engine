@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, DollarSign, Link2, Mail, User, CheckCircle, AlertCircle, Zap } from 'lucide-react';
+import { BookOpen, DollarSign, Link2, Mail, User, CheckCircle, AlertCircle, Zap, Youtube } from 'lucide-react';
 import api from '../lib/api';
 
 const CATEGORIES = ['AI & Machine Learning', 'Digital Marketing', 'E-commerce', 'Programming', 'Finance & Investing', 'Business', 'Design', 'Other'];
@@ -12,7 +12,7 @@ export default function ListCourse() {
 
   const [form, setForm] = useState({
     name: '', email: '', course_name: '', course_url: '',
-    category: '', commission_pct: '', description: '',
+    preview_video_url: '', category: '', commission_pct: '', description: '',
   });
   const [status, setStatus] = useState(null); // null | 'loading' | 'success' | 'error'
   const [error, setError] = useState('');
@@ -49,6 +49,7 @@ export default function ListCourse() {
         email: 'Email Address',
         course_name: 'Course Name',
         course_url: 'Course URL',
+        preview_video_url: 'YouTube Trailer URL (optional)',
         category: 'Category',
         commission_pct: 'Commission % you offer us (e.g. 30)',
         description: 'Brief description of your course',
@@ -73,6 +74,7 @@ export default function ListCourse() {
         email: 'כתובת אימייל',
         course_name: 'שם הקורס',
         course_url: 'קישור לקורס',
+        preview_video_url: 'קישור לטריילר ביוטיוב (אופציונלי)',
         category: 'קטגוריה',
         commission_pct: 'אחוז עמלה שאתה מציע לנו (למשל 30)',
         description: 'תיאור קצר של הקורס',
@@ -138,8 +140,9 @@ export default function ListCourse() {
               { name: 'email', label: c.form.email, icon: Mail, type: 'email' },
               { name: 'course_name', label: c.form.course_name, icon: BookOpen, type: 'text' },
               { name: 'course_url', label: c.form.course_url, icon: Link2, type: 'url' },
+              { name: 'preview_video_url', label: c.form.preview_video_url, icon: Youtube, type: 'url', required: false },
               { name: 'commission_pct', label: c.form.commission_pct, icon: DollarSign, type: 'number' },
-            ].map(({ name, label, icon: Icon, type }) => (
+            ].map(({ name, label, icon: Icon, type, required: fieldRequired = true }) => (
               <div key={name}>
                 <label className="block text-xs font-mono text-gray-500 mb-1.5">{label}</label>
                 <div className="relative">
@@ -149,7 +152,7 @@ export default function ListCourse() {
                     name={name}
                     value={form[name]}
                     onChange={handleChange}
-                    required
+                    required={fieldRequired}
                     className="w-full bg-ink-900/60 border border-white/10 rounded-xl pl-9 pr-4 py-2.5
                                text-sm text-white placeholder-gray-600 font-sans
                                focus:outline-none focus:border-amber-500/50 transition-colors"

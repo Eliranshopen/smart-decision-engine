@@ -6,6 +6,8 @@ import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import NewsFeed from './pages/NewsFeed';
 import ListCourse from './pages/ListCourse';
+import ToolPage from './pages/ToolPage';
+import ComparePage from './pages/ComparePage';
 
 export default function App() {
   const { i18n } = useTranslation();
@@ -22,6 +24,9 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/news" element={<NewsFeed />} />
         <Route path="/list-course" element={<ListCourse />} />
+        <Route path="/tool/:slug" element={<ToolPage />} />
+        <Route path="/compare" element={<ComparePage />} />
+        <Route path="/compare/:slug" element={<ComparePage />} />
       </Routes>
     </div>
   );

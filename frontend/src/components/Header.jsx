@@ -21,8 +21,8 @@ export default function Header() {
 
   const navLinks = [
     { to: '/dashboard', label: t('nav.dashboard'), icon: BarChart2 },
+    { to: '/compare', label: 'Compare', icon: PlusCircle },
     { to: '/news', label: t('nav.news'), icon: Newspaper },
-    { to: '/list-course', label: 'List Your Course', icon: PlusCircle },
   ];
 
   return (

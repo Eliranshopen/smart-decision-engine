@@ -10,6 +10,7 @@ const ApplicationSchema = z.object({
   email: z.string().email(),
   course_name: z.string().min(2),
   course_url: z.string().url(),
+  preview_video_url: z.string().url().optional().or(z.literal('')),
   category: z.string().min(2),
   commission_pct: z.coerce.number().min(1).max(90),
   description: z.string().min(10),

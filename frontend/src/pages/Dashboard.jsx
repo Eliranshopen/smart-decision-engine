@@ -1,8 +1,10 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X, Wand2, BookOpen, PenTool, Image, Video, Mic, Code2, Bot, ChevronRight } from 'lucide-react';
+import { Search, X, Wand2, BookOpen, PenTool, Image, Video, Mic, Code2, Bot, Crown, TrendingUp, Clock, Tag } from 'lucide-react';
 import { useAffiliates } from '../hooks/useAffiliates';
 import AffiliateCard from '../components/AffiliateCard';
+import FeaturedSection from '../components/FeaturedSection';
+import NewsletterSection from '../components/NewsletterSection';
 
 // AI Tool subcategories
 const TOOL_SUBCATS = [
@@ -20,6 +22,13 @@ const SKILL_LEVELS = [
   { key: 'beginner',     label: 'Beginner' },
   { key: 'intermediate', label: 'Intermediate' },
   { key: 'advanced',     label: 'Advanced' },
+];
+
+const SORT_OPTIONS = [
+  { key: 'composite_score', label: 'Top Rated',  icon: Crown },
+  { key: 'trend_score',     label: 'Trending',   icon: TrendingUp },
+  { key: 'created_at',      label: 'Newest',     icon: Clock },
+  { key: 'free_first',      label: 'Free First', icon: Tag },
 ];
 
 const PILL = (active) =>
@@ -47,13 +56,16 @@ function SkeletonCard() {
 }
 
 export default function Dashboard() {
-  const [tab, setTab] = useState('tools'); // 'tools' | 'courses'
+  const [tab, setTab] = useState('tools');
   const [search, setSearch] = useState('');
   const [subcat, setSubcat] = useState('all');
   const [skillLevel, setSkillLevel] = useState('all');
   const [langFilter, setLangFilter] = useState('all');
+  const [sortKey, setSortKey] = useState('composite_score');
 
-  const { data, isLoading, error } = useAffiliates({ limit: 100, sort: 'composite_score' });
+  // Map our sort key to API params
+  const apiSort = sortKey === 'free_first' ? 'composite_score' : sortKey;
+  const { data, isLoading, error } = useAffiliates({ limit: 100, sort: apiSort });
   const allItems = data?.data ?? [];
 
   const filtered = useMemo(() => {
@@ -72,17 +84,36 @@ export default function Dashboard() {
     // Language
     if (langFilter !== 'all') items = items.filter(i => (i.language || 'en') === langFilter);
 
-    // Search
+    // Search — searches name and description
     if (search.trim()) {
       const q = search.toLowerCase();
-      items = items.filter(i => i.site_name?.toLowerCase().includes(q) || i.description?.toLowerCase().includes(q));
+      items = items.filter(i =>
+        i.site_name?.toLowerCase().includes(q) ||
+        i.description?.toLowerCase().includes(q) ||
+        i.subcategory?.toLowerCase().includes(q)
+      );
+    }
+
+    // Free first sort (client-side since API doesn't support it directly)
+    if (sortKey === 'free_first') {
+      const order = { free: 0, freemium: 1, paid: 2 };
+      items = [...items].sort((a, b) => (order[a.pricing_model] ?? 3) - (order[b.pricing_model] ?? 3));
     }
 
     return items;
-  }, [allItems, tab, subcat, skillLevel, langFilter, search]);
+  }, [allItems, tab, subcat, skillLevel, langFilter, search, sortKey]);
 
   const toolCount = allItems.filter(i => i.category === 'ai-tools').length;
   const courseCount = allItems.filter(i => i.category === 'courses').length;
+
+  // Count per subcategory for badges
+  const subcatCounts = useMemo(() => {
+    const tools = allItems.filter(i => i.category === 'ai-tools');
+    return TOOL_SUBCATS.reduce((acc, s) => {
+      acc[s.key] = s.key === 'all' ? tools.length : tools.filter(t => t.subcategory === s.key).length;
+      return acc;
+    }, {});
+  }, [allItems]);
 
   return (
     <div className="min-h-screen">
@@ -133,31 +164,43 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Main Tabs */}
+      {/* Main content */}
       <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex gap-2 mb-6">
-          {[
-            { key: 'tools',   label: 'AI Tools',  icon: Wand2,    count: toolCount },
-            { key: 'courses', label: 'Courses',   icon: BookOpen,  count: courseCount },
-          ].map(({ key, label, icon: Icon, count }) => (
-            <button
-              key={key}
-              onClick={() => { setTab(key); setSubcat('all'); setSkillLevel('all'); }}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-200 ${
-                tab === key
-                  ? key === 'tools'
-                    ? 'bg-violet-500/15 text-violet-300 border-violet-500/40'
-                    : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
-                  : 'bg-white/[0.03] text-white/45 border-white/[0.06] hover:text-white/70'
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              {label}
-              {count > 0 && (
-                <span className="text-xs px-1.5 py-0.5 rounded-md font-mono bg-white/10">{count}</span>
-              )}
-            </button>
-          ))}
+
+        {/* Main Tabs */}
+        <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+          <div className="flex gap-2">
+            {[
+              { key: 'tools',   label: 'AI Tools',  icon: Wand2,    count: toolCount },
+              { key: 'courses', label: 'Courses',   icon: BookOpen,  count: courseCount },
+            ].map(({ key, label, icon: Icon, count }) => (
+              <button
+                key={key}
+                onClick={() => { setTab(key); setSubcat('all'); setSkillLevel('all'); setSortKey('composite_score'); }}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-200 ${
+                  tab === key
+                    ? key === 'tools'
+                      ? 'bg-violet-500/15 text-violet-300 border-violet-500/40'
+                      : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
+                    : 'bg-white/[0.03] text-white/45 border-white/[0.06] hover:text-white/70'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {label}
+                {count > 0 && <span className="text-xs px-1.5 py-0.5 rounded-md font-mono bg-white/10">{count}</span>}
+              </button>
+            ))}
+          </div>
+
+          {/* Sort controls */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {SORT_OPTIONS.map(({ key, label, icon: Icon }) => (
+              <button key={key} onClick={() => setSortKey(key)}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${PILL(sortKey === key)}`}>
+                <Icon className="w-3 h-3" /> {label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Sub-filters */}
@@ -165,13 +208,19 @@ export default function Dashboard() {
           <AnimatePresence mode="wait">
             {tab === 'tools' ? (
               <motion.div key="tool-filters" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-wrap gap-2">
-                {TOOL_SUBCATS.map(({ key, label, icon: Icon }) => (
-                  <button key={key} onClick={() => setSubcat(key)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${PILL(subcat === key)}`}>
-                    <Icon className="w-3 h-3" />
-                    {label}
-                  </button>
-                ))}
+                {TOOL_SUBCATS.map(({ key, label, icon: Icon }) => {
+                  const count = subcatCounts[key] || 0;
+                  return (
+                    <button key={key} onClick={() => setSubcat(key)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${PILL(subcat === key)}`}>
+                      <Icon className="w-3 h-3" />
+                      {label}
+                      {count > 0 && key !== 'all' && (
+                        <span className="text-[10px] font-mono opacity-50">{count}</span>
+                      )}
+                    </button>
+                  );
+                })}
               </motion.div>
             ) : (
               <motion.div key="course-filters" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-wrap gap-2">
@@ -193,8 +242,13 @@ export default function Dashboard() {
           </AnimatePresence>
         </div>
 
+        {/* Top Picks (only on "All Tools" tab with no search) */}
+        {tab === 'tools' && subcat === 'all' && !search && sortKey === 'composite_score' && (
+          <FeaturedSection />
+        )}
+
         {/* Content */}
-        <div className="pb-16">
+        <div className="pb-8">
           {isLoading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
@@ -210,6 +264,7 @@ export default function Dashboard() {
               <p className="text-xs font-mono text-white/25 mb-4">
                 {filtered.length} {tab === 'tools' ? 'tools' : 'courses'}
                 {search && <> matching "<span className="text-white/40">{search}</span>"</>}
+                {subcat !== 'all' && <> in <span className="text-white/40 capitalize">{subcat}</span></>}
               </p>
               <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 <AnimatePresence>
@@ -232,6 +287,9 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+
+        {/* Newsletter — shown after grid */}
+        {!isLoading && <NewsletterSection />}
       </div>
     </div>
   );

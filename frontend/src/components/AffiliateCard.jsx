@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Sparkles, Star, Zap, TrendingUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import VideoModal from './VideoModal';
 
 // Subcategory colors for AI tools
@@ -106,7 +107,7 @@ export default function AffiliateCard({ affiliate, index = 0 }) {
   const {
     site_name, affiliate_link, category, subcategory,
     composite_score, preview_video_url,
-    description, language, pricing_model, skill_level,
+    description, language, pricing_model, skill_level, slug,
   } = affiliate;
 
   const logoDomain = getLogoDomain(affiliate_link);
@@ -147,10 +148,12 @@ export default function AffiliateCard({ affiliate, index = 0 }) {
           {/* Name + badges */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 flex-wrap mb-1">
-              <h3 className="font-semibold text-white text-sm leading-tight truncate">
+              <Link to={`/tool/${slug || affiliate?.id}`}
+                className="font-semibold text-white text-sm leading-tight truncate hover:underline no-underline">
                 {site_name}
-              </h3>
+              </Link>
               {isHot && <Sparkles className="w-3.5 h-3.5 text-amber-400 fill-amber-400 flex-shrink-0" />}
+              {affiliate?.is_featured && <span className="text-[9px] font-bold text-amber-400">★</span>}
             </div>
             <div className="flex flex-wrap gap-1">
               {/* Subcategory or category badge */}

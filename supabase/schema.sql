@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS affiliates (
       ) / 10.0,
     2)
   ) STORED,
+  preview_video_url text,        -- optional YouTube or direct video URL
   created_at       timestamptz NOT NULL DEFAULT now(),
   updated_at       timestamptz NOT NULL DEFAULT now()
 );
@@ -149,16 +150,17 @@ CREATE POLICY "Service role write subscriptions"
 
 -- Vendor applications table (course owners who want to list their courses)
 CREATE TABLE IF NOT EXISTS vendor_applications (
-  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name            text NOT NULL,
-  email           text NOT NULL,
-  course_name     text NOT NULL,
-  course_url      text NOT NULL,
-  category        text NOT NULL,
-  commission_pct  numeric NOT NULL,
-  description     text,
-  status          text NOT NULL DEFAULT 'pending',
-  submitted_at    timestamptz DEFAULT now()
+  id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name              text NOT NULL,
+  email             text NOT NULL,
+  course_name       text NOT NULL,
+  course_url        text NOT NULL,
+  preview_video_url text,          -- optional YouTube teaser URL
+  category          text NOT NULL,
+  commission_pct    numeric NOT NULL,
+  description       text,
+  status            text NOT NULL DEFAULT 'pending',
+  submitted_at      timestamptz DEFAULT now()
 );
 
 -- Allow anyone to submit (insert only), no read without auth
