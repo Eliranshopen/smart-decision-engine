@@ -45,6 +45,7 @@ const listQuerySchema = z.object({
   order: z.enum(['asc', 'desc']).optional().default('desc'),
   limit: z.coerce.number().int().min(1).max(100).optional().default(50),
   page: z.coerce.number().int().min(1).optional().default(1),
+  all: z.string().optional(),
 });
 
 // GET /api/affiliates
@@ -65,6 +66,11 @@ router.get('/', validateQuery(listQuerySchema), async (req, res, next) => {
 
     if (search) {
       query = query.ilike('site_name', `%${search}%`);
+    }
+
+    // Only show active affiliates by default (can be overridden with ?all=true for admin)
+    if (req.query.all !== 'true') {
+      query = query.eq('is_active', true);
     }
 
     const { data, error, count } = await query;
