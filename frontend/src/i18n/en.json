@@ -1,83 +1,76 @@
 {
   "nav": {
-    "dashboard": "Dashboard",
-    "news": "News Feed",
-    "tagline": "AI-Powered Opportunity Engine"
+    "dashboard": "Explore",
+    "news": "AI News",
+    "tagline": "Find the best AI tools & courses"
   },
   "hero": {
-    "badge": "AI-Powered",
-    "title": "Find Your Next",
-    "titleAccent": "Digital Opportunity",
-    "subtitle": "Our AI scans thousands of affiliate programs, courses, and tools daily — surfacing only the ones worth your time.",
-    "cta": "Start Exploring",
-    "ctaSecondary": "View All Opportunities",
+    "badge": "Curated by experts",
+    "title": "Find the right",
+    "titleAccent": "AI tool for you",
+    "subtitle": "We research and test hundreds of AI tools and courses so you don't have to — only the best ones make it here.",
+    "cta": "Find My Match",
+    "ctaSecondary": "Browse All Tools",
     "stats": {
-      "programs": "Programs Tracked",
+      "programs": "Tools & Courses",
       "updated": "Updated Daily",
-      "free": "Free to Use"
+      "free": "Free to Browse"
     }
   },
   "quiz": {
-    "title": "Personalize Your Feed",
-    "subtitle": "Answer 3 quick questions to get recommendations tailored to you.",
+    "title": "Find your perfect match",
+    "subtitle": "Answer 3 quick questions and we'll show you the right tools for you.",
     "step": "Step {{current}} of {{total}}",
     "next": "Next",
     "back": "Back",
-    "finish": "Show My Results",
+    "finish": "Show My Recommendations",
     "questions": {
       "goal": {
-        "label": "What's your primary goal?",
+        "label": "What do you want to do with AI?",
         "options": {
-          "income": "Earn passive income",
-          "skills": "Learn new skills",
-          "tools": "Find useful AI tools",
-          "all": "All of the above"
+          "income": "Create content (videos, writing, design)",
+          "skills": "Learn AI skills & get certified",
+          "tools": "Automate my work & save time",
+          "all": "Build or code with AI"
         }
       },
       "experience": {
-        "label": "What's your experience level?",
+        "label": "How familiar are you with AI tools?",
         "options": {
-          "beginner": "Complete beginner",
-          "some": "Some experience",
-          "advanced": "Advanced marketer",
-          "expert": "Industry expert"
+          "beginner": "Just getting started",
+          "some": "I've used ChatGPT a bit",
+          "advanced": "I use AI tools regularly",
+          "expert": "I'm a developer / power user"
         }
       },
       "risk": {
-        "label": "What's your risk tolerance?",
+        "label": "What's your budget for AI tools?",
         "options": {
-          "low": "Low — safety first",
-          "medium": "Medium — balanced",
-          "high": "High — I chase upside"
+          "low": "Free tools only",
+          "medium": "Open to affordable paid tools",
+          "high": "Budget is not an issue"
         }
       }
     }
   },
   "dashboard": {
-    "title": "Your Opportunities",
-    "subtitle": "AI-curated picks updated every 24 hours",
+    "title": "Top AI Tools & Courses",
+    "subtitle": "Curated picks, updated daily",
     "sections": {
       "trending": "Trending This Week",
       "beginner": "Best for Beginners",
       "top": "Top Picks",
-      "risky": "High Risk / High Reward",
+      "risky": "Most Powerful",
       "gems": "Hidden Gems"
     },
-    "empty": "No matches yet — more programs loading soon.",
-    "loading": "Loading opportunities...",
-    "error": "Failed to load. Retrying..."
+    "empty": "No results — try adjusting your filters.",
+    "loading": "Loading tools...",
+    "error": "Something went wrong. Please try again."
   },
   "card": {
-    "commission": "Commission",
     "score": "Score",
-    "risk": "Risk",
     "trend": "Trend",
-    "cta": "View Opportunity",
-    "riskLevels": {
-      "low": "Low Risk",
-      "medium": "Medium Risk",
-      "high": "High Risk"
-    },
+    "cta": "Try it Free",
     "categories": {
       "ai-tools": "AI Tool",
       "courses": "Course",
@@ -86,20 +79,19 @@
     }
   },
   "news": {
-    "title": "Market Signals",
-    "subtitle": "Fresh intelligence from HackerNews, Reddit & ProductHunt",
+    "title": "AI News",
+    "subtitle": "Latest updates from the AI world",
     "filters": {
       "all": "All",
-      "low": "Low Risk",
-      "medium": "Medium",
-      "high": "High Risk",
-      "opportunityMin": "Min Opportunity Score"
+      "low": "Beginner-friendly",
+      "medium": "Intermediate",
+      "high": "Advanced"
     },
     "readMore": "Read more",
     "credibility": "Credibility",
-    "opportunity": "Opportunity",
-    "loading": "Loading signals...",
-    "empty": "No signals match your filters."
+    "opportunity": "Relevance",
+    "loading": "Loading news...",
+    "empty": "No news match your filters."
   },
   "common": {
     "new": "NEW",
